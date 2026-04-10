@@ -10,8 +10,18 @@ def extract_frames(video_path: str) -> list[np.ndarray]:
     RGB before being appended — downstream MediaPipe and model code both
     expect RGB input.
 
+    NOTE — memory: all frames are loaded into memory at once. This is
+    intentional and acceptable for the expected input constraints of this
+    app: clips up to 60 seconds recorded at standard webcam resolutions
+    (typically 640x480 or 1280x720 at 30 fps). A 60-second 720p clip
+    produces ~1800 frames, which fits comfortably in RAM (~1.4 GB worst
+    case). Do not use this function for longer recordings or high-resolution
+    video without switching to a generator-based approach.
+
     Args:
         video_path: Absolute or relative path to the video file.
+            Expected: max 60 seconds, webcam resolution (up to 1280x720),
+            30 fps typical.
 
     Returns:
         List of frames, each shaped (H, W, 3) in RGB uint8.
